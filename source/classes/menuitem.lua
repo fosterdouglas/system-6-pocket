@@ -3,13 +3,12 @@ local gfx <const> = playdate.graphics
 
 
 class("MenuItem").extends()
-function MenuItem:init(label, options)
+function MenuItem:init(label)
 	MenuItem.super.init(self)
 	self.labelValue = label
 	self.menuOptions = options
 	self.isSelected = false
 	
-	gfx.setFont(menuFont)
 	self:createLabel()
 end
 
@@ -32,6 +31,7 @@ function MenuItem:createLabel()
 		end
 		
 		_setImageColor(kNXOR)
+		gfx.setFont(menuFont)
 		gfx.drawText(self.labelValue, (menuItemPadding/2), 0)
 	end
 end
@@ -39,7 +39,4 @@ end
 function MenuItem:toggleItem()
 	self.isSelected = not self.isSelected
 	self.labelSprite:markDirty()
-end
-
-function MenuItem:createOptions()
 end

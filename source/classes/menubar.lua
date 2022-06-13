@@ -3,11 +3,11 @@ local gfx <const> = playdate.graphics
 
 
 class("MenuBar").extends()
-function MenuBar:init(itemsTable)
+function MenuBar:init(items)
 	MenuBar.super.init(self)
-	self.menuBarConfigurations = itemsTable
+	self.menuBarConfigurations = items
 	self.menuBar = table.create(#self.menuBarConfigurations, 0)
-	self.menuItemSelected = 0
+	self.menuItemIndex = 0
 
 	self:createMenuBar()
 end
@@ -15,40 +15,56 @@ end
 function MenuBar:createMenuBar()
 	local offsetX = -(menuItemPadding/2)
 	for i, v in ipairs(self.menuBarConfigurations) do
-		obj = MenuItem(v.label, v.options)
+		local item = MenuItem(v.label)
 		local itemX = ((menuItemPadding) * i) + offsetX
-		offsetX = offsetX + obj.labelWidth
+		offsetX = offsetX + item.labelWidth
 		
-		obj.labelSprite:add()
-		obj.labelSprite:moveTo(itemX, 0)
-		table.insert(self.menuBar, obj)	
+		item.labelSprite:add()
+		item.labelSprite:moveTo(itemX, 0)
+		table.insert(self.menuBar, item)	
 	end
+end
+
+function MenuBar:createOptionsList()
+	self.optionsList = OptionsList(
+		self.menuBarConfigurations[self.menuItemIndex].options,
+		self.menuBar[self.menuItemIndex].labelSprite.x,
+		self.menuBar[self.menuItemIndex].labelSprite.y
+	)
 end
 
 function MenuBar:selectNextMenuItem()
-	if self.menuItemSelected ~= 0 then
-		self.menuBar[self.menuItemSelected]:toggleItem()
+	if self.menuItemIndex ~= 0 then
+		self.menuBar[self.menuItemIndex]:toggleItem()
 	end
 	
-	self.menuItemSelected = (self.menuItemSelected%#self.menuBar) + 1
-	self.menuBar[self.menuItemSelected]:toggleItem()
+	self.menuItemIndex = (self.menuItemIndex%#self.menuBar) + 1
+	self.menuBar[self.menuItemIndex]:toggleItem()
+	
+	if self.optionsList ~= nil then
+		self.optionsList:removeOptionsList()
+		self.optionsList = nil
+	end
+	
+	self:createOptionsList()
 end
 
+--TODO: match above
 function MenuBar:selectPreviousMenuItem()
-	if self.menuItemSelected ~= 0 then
-		self.menuBar[self.menuItemSelected]:toggleItem()
+	if self.menuItemIndex ~= 0 then
+		self.menuBar[self.menuItemIndex]:toggleItem()
 	end
 	
-	self.menuItemSelected = math.max(math.fmod(self.menuItemSelected - 1, #self.menuBar), 0)
-	if self.menuItemSelected == 0 then
-		self.menuItemSelected = #self.menuBar
+	self.menuItemIndex = math.max(math.fmod(self.menuItemIndex - 1, #self.menuBar), 0)
+	if self.menuItemIndex == 0 then
+		self.menuItemIndex = #self.menuBar
 	end
-	self.menuBar[self.menuItemSelected]:toggleItem()
+	self.menuBar[self.menuItemIndex]:toggleItem()
 end
 
 function MenuBar:resetMenu()
-	if self.menuItemSelected ~= 0 then
-		self.menuBar[self.menuItemSelected]:toggleItem()
-		self.menuItemSelected = 0
+	if self.menuItemIndex ~= 0 then
+		self.menuBar[self.menuItemIndex]:toggleItem()
+		self.menuItemIndex = 0
 	end
 end

@@ -10,6 +10,7 @@ import "CoreLibs/object"
 import "CoreLibs/animation"
 import "CoreLibs/ui"
 import "CoreLibs/crank"
+import "CoreLibs/utilities/sampler"
 
 
 -- -- -- -- CONSTANTS -- -- -- -- 
@@ -20,54 +21,41 @@ local gfx <const> = playdate.graphics
 menuFont = gfx.font.new("assets/fonts/chicago-9")
 menuFontHeight = gfx.font.getHeight(menuFont)
 menuBarHeight = menuFontHeight
-menuItemPadding = 14
+menuItemPadding = 13
 
 -- -- -- -- CLASSES -- -- -- -- 
 import "classes/menuitem"
 import "classes/menubar"
+import "classes/optionslist"
+import "classes/window"
 
 -- -- -- -- BACKGROUND -- -- -- -- 
 gfx.sprite.setBackgroundDrawingCallback(
 	function(x, y, width, height)
-		-- Background
+		-- background
 		gfx.setPattern({0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA})
 		gfx.fillRect(0, 0, kDisplayWidth, kDisplayHeight)
 		
-		-- Menu Bar
+		-- menu bar
 		gfx.setColor(kWhite)
 		gfx.fillRect(0, 0, kDisplayWidth, menuBarHeight)
 		
-		-- Divider
+		-- divider
 		gfx.setColor(kBlack)
 		gfx.drawLine(0, menuBarHeight, kDisplayWidth, menuBarHeight)
 	end
 )
 
 -- -- -- -- SETUP -- -- -- -- 
-menu = MenuBar(
-	{
-		{ 
-			label = "◊", 
-			options = {}
-		},
-		{
-			label = "File", 
-			options = {}
-		},
-		{
-			label = "Edit", 
-			options = {}
-		},
-		{
-			label = "View",
-			options = {}
-		},
-		{
-			label = "Special",
-			options = {}
-		}
-	}
-)
+import "configuration"
+
+helloWorld = Window(200, 100, "Hello World")
+helloWorld:displayWindow(50, 50)
+helloWorld:setInactive()
+
+welcome = Window(300, 120, "Welcome to System 6® Pocket™")
+welcome:displayWindow(90, 80)
+welcome:setActive()
 
 -- -- -- -- UPDATE -- -- -- -- 
 function playdate.update()
