@@ -16,9 +16,12 @@ function Window:init(width, height, title)
 	
 	self.isActive = false
 	
+	self:setZIndex(100)
 	self:setOpaque(true)
 	self:setCenter(0, 0)
 	self:setBounds(self.x, self.y, width, height)
+	
+	self.innerRect = playdate.geometry.rect.new(self.x + 1, self.y + 1 + menuBarHeight, self.width - 3, self.height - 3 - menuBarHeight) 
 end
 
 function Window:update()
@@ -82,11 +85,17 @@ function Window:displayWindow(x, y)
 end
 
 function Window:setActive()
+	setAllWindowsInactive()
+	
 	self.isActive = true
+	self:setZIndex(100)
+	self:markDirty()
 end
 
 function Window:setInactive()
 	self.isActive = false
+	self:setZIndex(self:getZIndex() - 1)
+	self:markDirty()
 end
 
 function Window:setTitleDisplay(flag)
@@ -94,7 +103,35 @@ function Window:setTitleDisplay(flag)
 	self:markDirty()
 end
 
-function Window:removeWindow()
+function Window:removeWindow(index)	
 	self:remove()
 	self = nil
+end
+
+-- -- -- -- FUNCTIONS -- -- -- --
+function getActiveWindowIndex()
+	for i,v in ipairs(programList) do
+		if v.isActive then return i end
+	end
+end
+
+function setAllWindowsInactive()
+	for i,v in ipairs(programList) do
+		programList[i]:setInactive()
+	end
+end
+
+function closeActiveWindow()
+	-- Remove to program's window and remove it from programList
+	for i,v in ipairs(programList) do
+		if v.isActive then 
+			v:removeWindow() 
+			table.remove(programList, i)
+		end
+	end
+	
+	-- Set the last window in the programList to active
+	if #programList > 0 then
+		programList[#programList]:setActive()
+	end
 end

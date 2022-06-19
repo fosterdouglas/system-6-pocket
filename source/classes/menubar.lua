@@ -33,7 +33,14 @@ function MenuBar:createOptionsList()
 	)
 end
 
-function MenuBar:selectNextMenuItem()
+function MenuBar:removeOptionsList()
+	if self.optionsList ~= nil then
+		self.optionsList:removeOptionsList()
+		self.optionsList = nil
+	end
+end
+
+function MenuBar:selectNextMenuBarItem()
 	if self.menuItemIndex ~= 0 then
 		self.menuBar[self.menuItemIndex]:toggleItem()
 	end
@@ -41,16 +48,11 @@ function MenuBar:selectNextMenuItem()
 	self.menuItemIndex = (self.menuItemIndex%#self.menuBar) + 1
 	self.menuBar[self.menuItemIndex]:toggleItem()
 	
-	if self.optionsList ~= nil then
-		self.optionsList:removeOptionsList()
-		self.optionsList = nil
-	end
-	
+	self:removeOptionsList()
 	self:createOptionsList()
 end
 
---TODO: match above
-function MenuBar:selectPreviousMenuItem()
+function MenuBar:selectPreviousMenuBarItem()
 	if self.menuItemIndex ~= 0 then
 		self.menuBar[self.menuItemIndex]:toggleItem()
 	end
@@ -60,11 +62,15 @@ function MenuBar:selectPreviousMenuItem()
 		self.menuItemIndex = #self.menuBar
 	end
 	self.menuBar[self.menuItemIndex]:toggleItem()
+	
+	self:removeOptionsList()
+	self:createOptionsList()
 end
 
-function MenuBar:resetMenu()
+function MenuBar:resetMenuBar()
 	if self.menuItemIndex ~= 0 then
 		self.menuBar[self.menuItemIndex]:toggleItem()
 		self.menuItemIndex = 0
+		self:removeOptionsList()
 	end
 end

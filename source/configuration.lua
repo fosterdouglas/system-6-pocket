@@ -1,19 +1,22 @@
-menu = MenuBar(
+menuBar = MenuBar(
 	{
 		{ 
 			label = "◊", 
 			options = {
 				{
-					label="About System 6 Pocket..."
+					label = "About System 6 Pocket...",
+					program = function() 
+						Finder("Welcome to System 6® Pocket™")
+					end 
 				},
 				{
-					label="Clock"
+					label = "Clock"
 				},
 				{
-					label="Calculator"
+					label = "Calculator"
 				},
 				{
-					label="Note Pad"
+					label = "Note Pad"
 				},
 			}
 		},
@@ -21,13 +24,28 @@ menu = MenuBar(
 			label = "File", 
 			options = {
 				{
-					label="Test Item 1"
+					label = "Open"
 				},
 				{
-					label="Test Item 2"
+					label = "Close",
+					program = function()
+						closeActiveWindow()
+					end
 				},
 				{
-					label="Test Item 3"
+					label = "New...",
+					program = function()
+						Finder("Hello World")
+					end
+				},
+				{
+					label = "Save"
+				},
+				{
+					label = "Print"
+				},
+				{
+					label = "Quit"
 				},
 			}
 		},
@@ -35,13 +53,19 @@ menu = MenuBar(
 			label = "Edit", 
 			options = {
 				{
-					label="Test Item 1"
+					label = "Undo"
 				},
 				{
-					label="Test Item 2"
+					label = "Copy"
 				},
 				{
-					label="Test Item 3"
+					label = "Paste"
+				},
+				{
+					label = "Select All"
+				},
+				{
+					label = "Clear"
 				},
 			}
 		},
@@ -49,29 +73,24 @@ menu = MenuBar(
 			label = "View",
 			options = {
 				{
-					label="Test Item 1"
+					label = "by Icon"
 				},
 				{
-					label="Test Item 2"
+					label = "by Small Icon"
 				},
 				{
-					label="Test Item 3"
+					label = "by Name"
+				},
+				{
+					label = "by Date"
+				},
+				{
+					label = "by Size"
+				},
+				{
+					label = "by Kind"
 				},
 			}
 		},
-		{
-			label = "Special",
-			options = {
-				{
-					label="Test Item 1"
-				},
-				{
-					label="Test Item 2"
-				},
-				{
-					label="Test Item 3"
-				},
-			}
-		}
 	}
 )

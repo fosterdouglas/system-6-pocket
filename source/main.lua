@@ -12,22 +12,27 @@ import "CoreLibs/ui"
 import "CoreLibs/crank"
 import "CoreLibs/utilities/sampler"
 
-
 -- -- -- -- CONSTANTS -- -- -- -- 
-import "lib/_utilities"
+import "lib/lemonade-utilities/_lemonade"
 local gfx <const> = playdate.graphics
 
 -- -- -- -- GLOBALS -- -- -- -- 
 menuFont = gfx.font.new("assets/fonts/chicago-9")
+textFont = gfx.font.new("assets/fonts/geneva-7")
 menuFontHeight = gfx.font.getHeight(menuFont)
 menuBarHeight = menuFontHeight
 menuItemPadding = 13
+programList = {}
+DEBUG = false
 
 -- -- -- -- CLASSES -- -- -- -- 
 import "classes/menuitem"
 import "classes/menubar"
 import "classes/optionslist"
 import "classes/window"
+import "classes/start"
+import "classes/icon"
+import "programs/finder"
 
 -- -- -- -- BACKGROUND -- -- -- -- 
 gfx.sprite.setBackgroundDrawingCallback(
@@ -43,25 +48,28 @@ gfx.sprite.setBackgroundDrawingCallback(
 		-- divider
 		gfx.setColor(kBlack)
 		gfx.drawLine(0, menuBarHeight, kDisplayWidth, menuBarHeight)
+		
+		-- border
+		gfx.image.new('assets/images/border'):draw(0, 0)
 	end
 )
 
 -- -- -- -- SETUP -- -- -- -- 
 import "configuration"
 
-helloWorld = Window(200, 100, "Hello World")
-helloWorld:displayWindow(50, 50)
-helloWorld:setInactive()
+if not DEBUG then
+	Start()
+end
 
-welcome = Window(300, 120, "Welcome to System 6® Pocket™")
-welcome:displayWindow(90, 80)
-welcome:setActive()
+Icon("assets/images/trash-can", "Trash", 344, 182)
 
 -- -- -- -- UPDATE -- -- -- -- 
 function playdate.update()
 	playdate.timer.updateTimers()
 	playdate.frameTimer.updateTimers()
 	gfx.sprite.update()
+	
+	-- gfx.drawRect(50, 50, 50, 20)
 	
 	-- _setImageColor(kCopy)
 	-- gfx.setFont(menuFont)
@@ -70,18 +78,35 @@ end
 
 -- -- -- -- INPUTS -- -- -- -- 
 function playdate.rightButtonDown()
-	menu:selectNextMenuItem()
+	menuBar:selectNextMenuBarItem()
 end
 
 function playdate.leftButtonDown()
-	menu:selectPreviousMenuItem()
+	menuBar:selectPreviousMenuBarItem()
 end
 
 function playdate.BButtonDown()
-	menu:resetMenu()
+	
 end
 
-	-- -- -- -- DEBUG -- -- -- --
+function playdate.upButtonDown()
+	local prevIndex = math.max(math.fmod(getActiveWindowIndex() - 1, #programList), 0)
+	if prevIndex == 0 then
+		prevIndex = #programList
+	end
+	
+	setAllWindowsInactive()
+	programList[prevIndex]:setActive()
+end
+
+function playdate.downButtonDown()
+	local nextIndex = (getActiveWindowIndex()) % (#programList) + 1
+	
+	setAllWindowsInactive()
+	programList[nextIndex]:setActive()
+end
+
+-- -- -- -- DEBUG -- -- -- --
 function playdate.keyPressed(key)
 	if key == "1" then
 	end
