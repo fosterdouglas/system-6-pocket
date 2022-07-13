@@ -12,7 +12,6 @@ function Icon:init(image, text, x, y)
 	
 	self.iconImage = gfx.image.new(image)
 	self.height = self.iconImage.height + lineHeight
-	print(self.height)
 	self.width = math.max(self.iconImage.width, textFont:getTextWidth(self.text) + (textPadding * 2))
 	
 	self.isSelected = false
@@ -36,7 +35,6 @@ function Icon:draw()
 	end
 	
 	gfx.setColor(kWhite)
-	print(self.iconImage.height)
 	gfx.fillRect(0, self.iconImage.height, self.width, (textFont:getHeight() - 2) + textPadding*2)
 	
 	_setImageColor(kBlack)

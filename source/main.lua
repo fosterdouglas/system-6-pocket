@@ -11,28 +11,35 @@ import "CoreLibs/animation"
 import "CoreLibs/ui"
 import "CoreLibs/crank"
 import "CoreLibs/utilities/sampler"
+import "CoreLibs/keyboard"
 
 -- -- -- -- CONSTANTS -- -- -- -- 
 import "lib/lemonade-utilities/_lemonade"
 local gfx <const> = playdate.graphics
 
 -- -- -- -- GLOBALS -- -- -- -- 
-menuFont = gfx.font.new("assets/fonts/chicago-9")
-textFont = gfx.font.new("assets/fonts/geneva-7")
+menuFont = gfx.font.new("assets/fonts/chicago-12")
+padFont = gfx.font.new("assets/fonts/new-york-12")
+textFont = gfx.font.new("assets/fonts/geneva-9")
 menuFontHeight = gfx.font.getHeight(menuFont)
 menuBarHeight = menuFontHeight
 menuItemPadding = 13
-programList = {}
-DEBUG = false
+DEBUG = true
 
 -- -- -- -- CLASSES -- -- -- -- 
-import "classes/menuitem"
-import "classes/menubar"
-import "classes/optionslist"
+import "classes/Factory"
+import "classes/menu/MenuItem"
+import "classes/menu/MenuBar"
+import "classes/menu/OptionsList"
 import "classes/window"
 import "classes/start"
 import "classes/icon"
-import "programs/finder"
+import "classes/Program"
+import "classes/Cursor"
+import "programs/Finder"
+import "programs/Clock"
+import "programs/NotePad"
+import "programs/Puzzle"
 
 -- -- -- -- BACKGROUND -- -- -- -- 
 gfx.sprite.setBackgroundDrawingCallback(
@@ -61,7 +68,11 @@ if not DEBUG then
 	Start()
 end
 
+factory = Factory()
+cursor = Cursor()
+
 Icon("assets/images/trash-can", "Trash", 344, 182)
+Puzzle()
 
 -- -- -- -- UPDATE -- -- -- -- 
 function playdate.update()
@@ -69,7 +80,7 @@ function playdate.update()
 	playdate.frameTimer.updateTimers()
 	gfx.sprite.update()
 	
-	-- gfx.drawRect(50, 50, 50, 20)
+	-- gfx.drawText()
 	
 	-- _setImageColor(kCopy)
 	-- gfx.setFont(menuFont)
@@ -77,34 +88,20 @@ function playdate.update()
 end
 
 -- -- -- -- INPUTS -- -- -- -- 
-function playdate.rightButtonDown()
-	menuBar:selectNextMenuBarItem()
-end
-
-function playdate.leftButtonDown()
-	menuBar:selectPreviousMenuBarItem()
-end
-
-function playdate.BButtonDown()
+function desktopInputHandlers()
+	local inputHandlers = {
+		rightButtonDown = function()
+			menuBar:selectNextMenuBarItem()
+		end,
+		leftButtonDown = function()
+			menuBar:selectPreviousMenuBarItem()
+		end,
+	}
 	
+	playdate.inputHandlers.push(inputHandlers)
 end
 
-function playdate.upButtonDown()
-	local prevIndex = math.max(math.fmod(getActiveWindowIndex() - 1, #programList), 0)
-	if prevIndex == 0 then
-		prevIndex = #programList
-	end
-	
-	setAllWindowsInactive()
-	programList[prevIndex]:setActive()
-end
-
-function playdate.downButtonDown()
-	local nextIndex = (getActiveWindowIndex()) % (#programList) + 1
-	
-	setAllWindowsInactive()
-	programList[nextIndex]:setActive()
-end
+desktopInputHandlers()
 
 -- -- -- -- DEBUG -- -- -- --
 function playdate.keyPressed(key)
